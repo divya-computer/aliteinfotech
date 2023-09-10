@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:aliteinfotech/Activity/Aboutus.dart';
@@ -8,6 +9,9 @@ import 'package:aliteinfotech/Model/UserInformation.dart';
 import 'package:aliteinfotech/Utills/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +23,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   List<UserData> userInfoList = [];
+  final pdf = pw.Document();
+  int number = 0;
 
   @override
   void initState() {
@@ -92,14 +98,42 @@ class _HomePageState extends State<HomePage> {
               itemCount: userInfoList.length,
               itemBuilder: (context, index) {
                 return Card(
-                    child: ListTile(
-                  leading: Image.network(
-                      "https://source.unsplash.com/random/800x600?people&$index"),
-                  title: Text('Name : ${userInfoList[index].name}'),
-                  subtitle: Text(
-                      'Email : ${userInfoList[index].email} \nGender : ${userInfoList[index].gender} \nStatus : ${userInfoList[index].status}'),
-                ));
-              }),
+                  child: ListTile(
+                    leading: Image.network(
+                        "https://source.unsplash.com/random/800x600?people&$index"),
+                    title: Text('Name : ${userInfoList[index].name}'),
+                    subtitle: Text(
+                      'Email : ${userInfoList[index].email} \nGender : ${userInfoList[index].gender} \nStatus : ${userInfoList[index].status}',
+                    ),
+                    trailing: InkWell(
+                      child: Icon(
+                        Icons.download,
+                        color: Colors.black,
+                      ),
+                      onTap: () {
+                        number++;
+                        savePDF(
+                            'https://source.unsplash.com/random/800x600?people&$index',
+                            userInfoList[index].name,
+                            userInfoList[index].email,
+                            userInfoList[index].gender,
+                            userInfoList[index].status);
+                        // pdf.addPage(
+                        //   pw.Page(
+                        //     build: (pw.Context context) {
+                        //       return pw.Center(
+                        //         child: pw.Text(
+                        //             'Hello \n Name : ${userInfoList[index].name}'),
+                        //       ); // Center
+                        //     },
+                        //   ),
+                        // );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 
@@ -132,5 +166,56 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> savePDF(String image, String name, String email, String gender,
+      String status) async {
+    // Create a PDF document
+    final pdf = pw.Document();
+
+    // Add content to the PDF
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(
+                'Name : $name \nEmail : $email \nGender : $gender \nStatus : $status'),
+          );
+        },
+      ),
+    );
+
+    // Get the "Downloads" directory on the internal storage
+    final directory = await getExternalStorageDirectory();
+
+    if (directory != null) {
+      final filePath = '${directory.path}/example$number.pdf';
+
+      // Save the PDF to the "Downloads" directory
+      final file = File(filePath);
+      await file.writeAsBytes(await pdf.save());
+
+      // Show a confirmation dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('PDF Saved'),
+            content: Text('The PDF has been saved to $filePath.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Handle the case where the "Downloads" directory is not available
+      print('Error: Downloads directory not available.');
+    }
   }
 }
