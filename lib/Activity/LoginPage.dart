@@ -1,3 +1,4 @@
+import 'package:aliteinfotech/Activity/HomePage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,8 +12,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  TextEditingController tecEmail = new TextEditingController();
-  TextEditingController tecPassword = new TextEditingController();
   String _email = "", _pass = "";
   @override
   Widget build(BuildContext context) {
@@ -61,6 +60,11 @@ class _LoginPageState extends State<LoginPage> {
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()));
                         }
                       },
                     ),
