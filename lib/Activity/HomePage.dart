@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:aliteinfotech/Activity/Aboutus.dart';
 import 'package:aliteinfotech/Activity/AddUserInfo.dart';
 import 'package:aliteinfotech/Activity/Contactus.dart';
+import 'package:aliteinfotech/Activity/GalleryModule.dart';
 import 'package:aliteinfotech/Model/UserInformation.dart';
 import 'package:aliteinfotech/Utills/Utils.dart';
 import 'package:flutter/material.dart';
@@ -45,10 +46,10 @@ class _HomePageState extends State<HomePage> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Colors.black,
               ),
               child: Image.network(
-                'https://img.freepik.com/premium-photo/luxurious-floral-elements-botanical-background-wallpaper-design-prints-3d-render_717906-525.jpg',
+                'https://pbs.twimg.com/profile_images/1475339941936652291/AbKQNKZl_400x400.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -69,6 +70,16 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AddUserInfo()));
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.camera_alt,
+              ),
+              title: const Text('Gallery Module'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GalleryModule()));
               },
             ),
             ListTile(
@@ -98,37 +109,18 @@ class _HomePageState extends State<HomePage> {
               itemCount: userInfoList.length,
               itemBuilder: (context, index) {
                 return Card(
-                  child: ListTile(
-                    leading: Image.network(
-                        "https://source.unsplash.com/random/800x600?people&$index"),
-                    title: Text('Name : ${userInfoList[index].name}'),
-                    subtitle: Text(
-                      'Email : ${userInfoList[index].email} \nGender : ${userInfoList[index].gender} \nStatus : ${userInfoList[index].status}',
-                    ),
-                    trailing: InkWell(
-                      child: Icon(
+                  child: InkWell(
+                    child: ListTile(
+                      leading: Image.network(
+                          "https://source.unsplash.com/random/800x600?people&$index"),
+                      title: Text('Name : ${userInfoList[index].name}'),
+                      subtitle: Text(
+                        'Email : ${userInfoList[index].email} \nGender : ${userInfoList[index].gender} \nStatus : ${userInfoList[index].status}',
+                      ),
+                      trailing: Icon(
                         Icons.download,
                         color: Colors.black,
                       ),
-                      onTap: () {
-                        number++;
-                        savePDF(
-                            'https://source.unsplash.com/random/800x600?people&$index',
-                            userInfoList[index].name,
-                            userInfoList[index].email,
-                            userInfoList[index].gender,
-                            userInfoList[index].status);
-                        // pdf.addPage(
-                        //   pw.Page(
-                        //     build: (pw.Context context) {
-                        //       return pw.Center(
-                        //         child: pw.Text(
-                        //             'Hello \n Name : ${userInfoList[index].name}'),
-                        //       ); // Center
-                        //     },
-                        //   ),
-                        // );
-                      },
                     ),
                   ),
                 );
